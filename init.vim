@@ -239,7 +239,7 @@ local dap = require('dap')
 
 dap.adapters.coreclr = {
   type = 'executable',
-  command = 'C:/Users/plini/AppData/@Apps/netcoredbg-win64/netcoredbg/netcoredbg.exe',
+  command = 'C:/Users/GanGss/AppData/@Apps/netcoredbg/netcoredbg.exe',
   args = { '--interpreter=vscode' }
 }
 
