@@ -23,6 +23,8 @@ Plug 'thosakwe/vim-flutter'
 Plug 'mfussenegger/nvim-dap'
 Plug 'nvim-neotest/nvim-nio'
 Plug 'rcarriga/nvim-dap-ui'
+
+Plug 'voldikss/vim-floaterm'
 call plug#end()
 
 let g:vimspector_enable_mappings = 'HUMAN'
@@ -42,7 +44,8 @@ nnoremap <C-o> :NERDTreeToggle <cr>
 nnoremap <C-p> :Telescope find_files<cr>
 nnoremap <C-l> :Telescope live_grep<cr>
 nnoremap <C-b> :Telescope buffers<cr>
-nnoremap <C-t> :Telescope help_tags<cr>
+"nnoremap <C-t> :Telescope help_tags<cr>
+nnoremap <C-t> :FloatermNew<CR>
 
 
 lua << EOF
@@ -366,3 +369,4 @@ dap.listeners.before.event_exited["dapui_config"] = function()
 end
 EOF
 " END
+
