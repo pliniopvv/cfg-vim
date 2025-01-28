@@ -370,3 +370,23 @@ end
 EOF
 " END
 
+"
+
+
+
+
+
+
+
+"
+"                 CONFIG VIM-FLUTTER
+"
+nnoremap <leader>fr :FlutterRun<cr>
+nnoremap <leader>fq :FlutterQuit<cr>
+nnoremap <leader>fh :FlutterHotReload<cr>
+nnoremap <leader>fH :FlutterHotRestart<cr>
+nnoremap <leader>fD :FlutterVisualDebug<cr>
+
+"
+"                 END
+"
