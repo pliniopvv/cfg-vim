@@ -45,19 +45,21 @@ nnoremap <C-p> :Telescope find_files<cr>
 nnoremap <C-l> :Telescope live_grep<cr>
 nnoremap <C-b> :Telescope buffers<cr>
 "nnoremap <C-t> :Telescope help_tags<cr>
-nnoremap <C-t> :FloatermNew<CR>
+nnoremap <C-t> :FloatermNew --height=0.9 --width=0.9<CR>
+nnoremap <C-y> :FloatermToggle! --height=0.9 --width=0.9<CR>
+nnoremap <C-r> :FloatermNext<CR>
 
 
 lua << EOF
 require('telescope').setup{
 defaults = {
-	file_ignore_patterns = {
-		'build',
-		'node_modules',
-		'.git',
-		'dist',
-	}
-	}
+  file_ignore_patterns = {
+    'build',
+    'node_modules',
+    '.git',
+    'dist',
+  }
+  }
 }
 EOF
 
@@ -120,7 +122,7 @@ endif
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+      \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
@@ -246,16 +248,37 @@ dap.adapters.coreclr = {
   args = { '--interpreter=vscode' }
 }
 
+dap.adapters.dart = {
+  type = "executable",
+  -- As of this writing, this functionality is open for review in https://github.com/flutter/flutter/pull/91802
+  command = "dart",
+  args = {"debug_adapter"}
+}
+
+dap.configurations.dart = {
+    {
+      type = "dart",
+      request = "launch",
+      name = "Launch Dart Program",
+      -- The nvim-dap plugin populates this variable with the filename of the current buffer
+      program = "${file}",
+      -- The nvim-dap plugin populates this variable with the editor's current working directory
+      cwd = "${workspaceFolder}",
+      args = {"--help"}, -- Note for Dart apps this is args, for Flutter apps toolArgs
+    }
+} 
+
 dap.configurations.cs = {
   {
-    type = "coreclr",
-    name = "launch - netcoredbg",
-    request = "launch",
-    program = function()
-        return vim.fn.input('Path to dll', vim.fn.getcwd() .. '/bin/Debug/', 'file')
-    end,
+      type = "coreclr",
+      name = "launch - netcoredbg",
+      request = "launch",
+      program = function()
+      return vim.fn.input('Path to dll', vim.fn.getcwd() .. '/bin/Debug/', 'file')
+      end,
   },
 }
+
 EOF
 
 nnoremap <silent> <F5> <Cmd>lua require'dap'.continue()<CR>
@@ -277,15 +300,15 @@ lua << EOF
 local dap, dapui = require("dap"), require("dapui")
 
 dapui.setup({
-  icons = { expanded = "▾", collapsed = "▸", current_frame = "▸" },
-  mappings = {
-    -- Use a table to apply multiple mappings
-    expand = { "<CR>", "<2-LeftMouse>" },
-    open = "o",
-    remove = "d",
-    edit = "e",
-    repl = "r",
-    toggle = "t",
+icons = { expanded = "▾", collapsed = "▸", current_frame = "▸" },
+mappings = {
+  -- Use a table to apply multiple mappings
+  expand = { "<CR>", "<2-LeftMouse>" },
+  open = "o",
+  remove = "d",
+  edit = "e",
+  repl = "r",
+  toggle = "t",
   },
   -- Use this to override mappings for specific elements
   element_mappings = {
@@ -307,23 +330,23 @@ dapui.setup({
   -- Layouts are opened in order so that earlier layouts take priority in window sizing.
   layouts = {
     {
-      elements = {
-      -- Elements can be strings or table with id and size keys.
-        { id = "scopes", size = 0.25 },
-        "breakpoints",
-        "stacks",
-        "watches",
-      },
-      size = 40, -- 40 columns
-      position = "left",
+        elements = {
+          -- Elements can be strings or table with id and size keys.
+          { id = "scopes", size = 0.25 },
+          "breakpoints",
+          "stacks",
+          "watches",
+        },
+        size = 40, -- 40 columns
+        position = "left",
     },
     {
-      elements = {
-        "repl",
-        "console",
-      },
-      size = 0.25, -- 25% of total lines
-      position = "bottom",
+        elements = {
+          "repl",
+          "console",
+        },
+        size = 0.25, -- 25% of total lines
+        position = "bottom",
     },
   },
   controls = {
@@ -340,9 +363,7 @@ dapui.setup({
       step_back = "",
       run_last = "↻",
       terminate = "□",
-    },
-  },
-  floating = {
+  }, }, floating = {
     max_height = nil, -- These can be integers or a float between 0 and 1.
     max_width = nil, -- Floats will be treated as percentage of your screen.
     border = "single", -- Border style. Can be "single", "double" or "rounded"
@@ -355,17 +376,17 @@ dapui.setup({
     max_type_length = nil, -- Can be integer or nil.
     max_value_lines = 100, -- Can be integer or nil.
   }
-})
+  })
 
 
 dap.listeners.after.event_initialized["dapui_config"] = function()
-  dapui.open()
+dapui.open()
 end
 dap.listeners.before.event_terminated["dapui_config"] = function()
-  dapui.close()
+dapui.close()
 end
 dap.listeners.before.event_exited["dapui_config"] = function()
-  dapui.close()
+dapui.close()
 end
 EOF
 " END
