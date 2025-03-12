@@ -23,6 +23,7 @@ Plug 'thosakwe/vim-flutter'
 Plug 'mfussenegger/nvim-dap'
 Plug 'nvim-neotest/nvim-nio'
 Plug 'rcarriga/nvim-dap-ui'
+Plug 'nicholasmata/nvim-dap-cs'
 
 Plug 'voldikss/vim-floaterm'
 call plug#end()
@@ -45,9 +46,9 @@ nnoremap <C-p> :Telescope find_files<cr>
 nnoremap <C-l> :Telescope live_grep<cr>
 nnoremap <C-b> :Telescope buffers<cr>
 "nnoremap <C-t> :Telescope help_tags<cr>
-nnoremap <C-t> :FloatermNew --height=0.9 --width=0.9<CR>
-nnoremap <C-y> :FloatermToggle! --height=0.9 --width=0.9<CR>
-nnoremap <C-r> :FloatermNext<CR>
+nnoremap <C-t>n :FloatermNew --height=0.9 --width=0.9<CR>
+nnoremap <C-t>s :FloatermToggle! --height=0.9 --width=0.9<CR>
+nnoremap <C-t>o :FloatermNext<CR>
 
 
 lua << EOF
@@ -240,48 +241,7 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 " CONFIG NVIM-DAP | https://aaronbos.dev/posts/debugging-csharp-neovim-nvim-dap
 "
 lua << EOF
-vim.g.dotnet_build_project = function()
-    local default_path = vim.fn.getcwd() .. '/'
-    if vim.g['dotnet_last_proj_path'] ~= nil then
-        default_path = vim.g['dotnet_last_proj_path']
-    end
-    local path = vim.fn.input('Path to your *proj file', default_path, 'file')
-    vim.g['dotnet_last_proj_path'] = path
-    local cmd = 'dotnet build -c Debug ' .. path .. ' > /dev/null'
-    print('')
-    print('Cmd to execute: ' .. cmd)
-    local f = os.execute(cmd)
-    if f == 0 then
-        print('\nBuild: ✔️ ')
-    else
-        print('\nBuild: ❌ (code: ' .. f .. ')')
-    end
-end
-
-vim.g.dotnet_get_dll_path = function()
-    local request = function()
-        return vim.fn.input('Path to dll: ', vim.fn.getcwd() .. '/bin/Debug/', 'file')
-    end
-
-    if vim.g['dotnet_last_dll_path'] == nil then
-        vim.g['dotnet_last_dll_path'] = request()
-    else
-        if vim.fn.confirm('Do you want to change the path to dll?\n' .. vim.g['dotnet_last_dll_path'], '&yes\n&no', 2) == 1 then
-            vim.g['dotnet_last_dll_path'] = request()
-        end
-    end
-
-    return vim.g['dotnet_last_dll_path']
-end
-
-
 local dap = require('dap')
-
-dap.adapters.coreclr = {
-      type = "executable",
-    command = "netcoredbg",
-    args = { "--interpreter=vscode" },
-}
 
 dap.adapters.dart = {
   type = "executable",
@@ -303,20 +263,26 @@ dap.configurations.dart = {
     }
 } 
 
-dap.configurations.cs = {
-      {
-        type = "coreclr",
-        name = "launch - netcoredbg",
-        request = "launch",
-        console = "integratedTerminal",
-        program = function()
-            if vim.fn.confirm('Should I recompile first?', '&yes\n&no', 2) == 1 then
-                vim.g.dotnet_build_project()
-            end
-            return vim.g.dotnet_get_dll_path()
-        end,
+require('dap-cs').setup({
+  -- Additional dap configurations can be added.
+  -- dap_configurations accepts a list of tables where each entry
+  -- represents a dap configuration. For more details do:
+  -- :help dap-configuration
+  dap_configurations = {
+    {
+      -- Must be "coreclr" or it will be ignored by the plugin
+      type = "coreclr",
+      name = "Attach remote",
+      mode = "remote",
+      request = "attach",
     },
-}
+  },
+  netcoredbg = {
+    -- the path to the executable netcoredbg which will be used for debugging.
+    -- by default, this is the "netcoredbg" executable on your PATH.
+    path = "netcoredbg" 
+  }
+})
 
 EOF
 
