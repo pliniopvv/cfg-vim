@@ -9,6 +9,9 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 
 Plug 'neovim/nvim-lspconfig'
+Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
 Plug 'hrsh7th/nvim-cmp'
 
 Plug 'vim-airline/vim-airline'
@@ -25,10 +28,21 @@ Plug 'nvim-neotest/nvim-nio'
 Plug 'rcarriga/nvim-dap-ui'
 Plug 'nicholasmata/nvim-dap-cs'
 
+Plug 'napmn/react-extract.nvim'
+
 Plug 'voldikss/vim-floaterm'
 call plug#end()
 
 let g:vimspector_enable_mappings = 'HUMAN'
+let g:NERDCreateDefaultMappings = 1
+let g:NERDSpaceDelims = 1
+let g:NERDCompactSexyComs = 1
+let g:NERDDefaultAlign = 'left'
+let g:NERDAltDelims_java = 1
+let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+let g:NERDCommentEmptyLines = 1
+let g:NERDTrimTrailingWhitespace = 1
+let g:NERDToggleCheckAllLines = 1
 
 syntax enable
 
@@ -40,17 +54,25 @@ set encoding=UTF-8
 
 colorscheme gruvbox
 
-nnoremap <C-o> :NERDTreeToggle <cr>
+nnoremap <C-o>o :NERDTreeToggle <cr>
+nnoremap <C-o>f :NERDTreeFind <cr>
 
-nnoremap <C-p> :Telescope find_files<cr>
-nnoremap <C-l> :Telescope live_grep<cr>
-nnoremap <C-b> :Telescope buffers<cr>
+nnoremap <C-s>f :Telescope find_files<cr>
+nnoremap <C-s>l :Telescope live_grep<cr>
+nnoremap <C-s>b :Telescope buffers<cr>
 "nnoremap <C-t> :Telescope help_tags<cr>
 nnoremap <C-t>n :FloatermNew --height=0.9 --width=0.9<CR>
 nnoremap <C-t>s :FloatermToggle! --height=0.9 --width=0.9<CR>
 nnoremap <C-t>o :FloatermNext<CR>
 
+nnoremap <C-h> :tabprevious <cr>
+nnoremap <C-l> :tabnext <cr>
 
+nnoremap <silent> <leader>c} V}:call nerdcommenter#Comment('x', 'toggle')<CR>
+nnoremap <silent> <leader>c{ V{:call nerdcommenter#Comment('x', 'toggle')<CR>
+
+nnoremap <leader>o :LspCodeAction <CR>
+	
 lua << EOF
 require('telescope').setup{
 defaults = {
@@ -62,6 +84,8 @@ defaults = {
   }
   }
 }
+
+require'lspconfig'.pyright.setup{}
 EOF
 
 
@@ -200,8 +224,8 @@ endif
 
 " Use CTRL-S for selections ranges.
 " Requires 'textDocument/selectionRange' support of language server.
-nmap <silent> <C-s> <Plug>(coc-range-select)
-xmap <silent> <C-s> <Plug>(coc-range-select)
+" nmap <silent> <C-s> <Plug>(coc-range-select)
+" xmap <silent> <C-s> <Plug>(coc-range-select)
 
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocAction('format')
@@ -416,3 +440,10 @@ nnoremap <leader>fD :FlutterVisualDebug<cr>
 "
 "                 END
 "
+
+lua << EOF
+require("react-extract").setup()
+
+vim.keymap.set({ "v" }, "<Leader>re", require("react-extract").extract_to_new_file)
+vim.keymap.set({ "v" }, "<Leader>rc", require("react-extract").extract_to_current_file)
+EOF
