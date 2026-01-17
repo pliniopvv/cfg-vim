@@ -85,7 +85,15 @@ defaults = {
   }
 }
 
-require'lspconfig'.pyright.setup{}
+vim.lsp.config("pyright", {
+  settings = {
+    python = {
+      analysis = {
+        typeCheckingMode = "basic",
+      },
+    },
+  },
+})
 EOF
 
 
