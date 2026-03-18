@@ -1,7 +1,7 @@
 call plug#begin()
 Plug 'scrooloose/nerdtree'
 Plug 'morhetz/gruvbox'
-Plug 'neoclide/coc.nvim', {'branch': 'release', 'tag': 'v0.0.81'}
+Plug 'neoclide/coc.nvim', {'branch': 'release', 'tag': 'v0.0.82'}
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.5' }
 Plug 'sheerun/vim-polyglot'
